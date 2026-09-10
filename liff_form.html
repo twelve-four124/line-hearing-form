@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車買取査定 事前ヒアリング</title>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+    background: #f5f7f8;
+    margin: 0;
+    padding: 16px;
+    color: #1a2b2f;
+  }
+  h1 {
+    font-size: 18px;
+    margin: 8px 0 20px;
+  }
+  form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 14px 0 4px;
+    color: #2a4a4f;
+  }
+  input, select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #d5dee0;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: #0f8a8a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  button:disabled { background: #a9c8c8; }
+  #status {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+  <h1>車買取査定 事前ヒアリング</h1>
+  <form id="hearingForm">
+    <label>氏名</label>
+    <input type="text" name="name" required>
+
+    <label>生年月日</label>
+    <input type="date" name="birthday" required>
+
+    <label>住所</label>
+    <input type="text" name="address" required>
+
+    <label>電話番号</label>
+    <input type="tel" name="phone" required>
+
+    <label>お乗りの車種</label>
+    <input type="text" name="carModel" required>
+
+    <label>年式</label>
+    <input type="text" name="carYear" placeholder="例: 2018年式" required>
+
+    <label>走行距離</label>
+    <input type="text" name="mileage" placeholder="例: 45000km" required>
+
+    <label>次に乗る車種(任意)</label>
+    <input type="text" name="nextCarModel">
+
+    <label>新車 or 中古車(任意)</label>
+    <select name="newOrUsed">
+      <option value="">選択してください</option>
+      <option value="新車">新車</option>
+      <option value="中古車">中古車</option>
+    </select>
+
+    <label>グレード(任意)</label>
+    <input type="text" name="grade">
+
+    <label>色(任意)</label>
+    <input type="text" name="color">
+
+    <label>取引日(任意)</label>
+    <input type="date" name="dealDate">
+
+    <button type="submit" id="submitBtn">送信する</button>
+    <div id="status"></div>
+  </form>
+
+<script>
+  // ここに手順4で取得するLIFF IDを設定します
+  const LIFF_ID = "YOUR_LIFF_ID";
+  // ここに手順3で取得するGASのWebアプリURLを設定します
+  const GAS_ENDPOINT = "YOUR_GAS_WEB_APP_URL";
+
+  let lineUserId = "";
+
+  async function init() {
+    await liff.init({ liffId: LIFF_ID });
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
+    const profile = await liff.getProfile();
+    lineUserId = profile.userId;
+  }
+  init();
+
+  document.getElementById("hearingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.textContent = "送信中…";
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    data.lineUserId = lineUserId;
+
+    try {
+      await fetch(GAS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(data)
+      });
+      status.textContent = "送信が完了しました。ありがとうございました。";
+      setTimeout(() => liff.closeWindow(), 1500);
+    } catch (err) {
+      status.textContent = "送信に失敗しました。時間をおいて再度お試しください。";
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
