@@ -38,6 +38,20 @@
     border-radius: 8px;
     font-size: 15px;
   }
+    /* iPhoneで日付欄が枠からはみ出すのを防ぐ */
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 44px;
+    background: #fff;
+    color: #1a2b2f;
+  }
+  input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+  }
   button {
     width: 100%;
     margin-top: 24px;
