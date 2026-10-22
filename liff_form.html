@@ -38,7 +38,7 @@
     border-radius: 8px;
     font-size: 15px;
   }
-    /* iPhoneで日付欄が枠からはみ出すのを防ぐ */
+  /* iPhoneで日付欄が枠からはみ出すのを防ぐ */
   input[type="date"] {
     -webkit-appearance: none;
     appearance: none;
@@ -51,6 +51,29 @@
   }
   input[type="date"]::-webkit-date-and-time-value {
     text-align: left;
+  }
+  .consent {
+    margin-top: 24px;
+    padding: 14px;
+    background: #f5f7f8;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .consent p {
+    margin: 0 0 10px;
+  }
+  .consent label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+  }
+  .consent input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
   }
   button {
     width: 100%;
@@ -116,6 +139,12 @@
 
     <label>次に乗るお車の車検満了日(任意)</label>
     <input type="date" name="shakenDate">
+
+    <div class="consent">
+      <p><strong>個人情報の取り扱いについて</strong><br>
+      ご入力いただいた情報は、ハッピーカーズ府中店にて、査定・お取引に関するご連絡のほか、お誕生日や車検時期などのご案内（LINEでのお知らせ）に利用します。ご案内が不要な場合は、いつでもLINEでお申し付けください。</p>
+      <label><input type="checkbox" name="consent" value="同意" required>上記に同意する</label>
+    </div>
 
     <button type="submit" id="submitBtn">送信する</button>
     <div id="status"></div>
