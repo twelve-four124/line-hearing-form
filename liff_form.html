@@ -108,6 +108,22 @@
     color: #5b6b6f;
     margin: 0 0 4px;
   }
+  #done {
+    display: none;
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .done-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0f8a8a;
+    margin: 0 0 8px;
+  }
 </style>
 </head>
 <body>
@@ -169,6 +185,12 @@
     <button type="submit" id="submitBtn">送信する</button>
     <div id="status"></div>
   </form>
+
+  <div id="done">
+    <p class="done-title">送信が完了しました</p>
+    <p>ご入力ありがとうございました。<br>担当者より2営業日以内にご連絡いたします。</p>
+    <button type="button" onclick="liff.isInClient() ? liff.closeWindow() : window.close()">閉じる</button>
+  </div>
 
 <script>
   // ここに手順4で取得するLIFF IDを設定します
@@ -232,8 +254,12 @@
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(data)
       });
-      status.textContent = "送信が完了しました。ありがとうございました。";
-      setTimeout(() => liff.closeWindow(), 1500);
+      // 完了画面を表示（自動で閉じられない環境でも真っ白にならないように）
+      e.target.style.display = "none";
+      document.getElementById("done").style.display = "block";
+      if (liff.isInClient()) {
+        setTimeout(() => liff.closeWindow(), 2500);
+      }
     } catch (err) {
       status.textContent = "送信に失敗しました。時間をおいて再度お試しください。";
       btn.disabled = false;
