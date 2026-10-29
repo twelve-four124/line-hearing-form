@@ -167,7 +167,12 @@
     await liff.init({ liffId: LIFF_ID });
 
     // liff.init の後でないとパラメータが読めないため、ここで取得
-    const params = new URLSearchParams(location.search);
+    let params = new URLSearchParams(location.search);
+    // 念のため：パラメータが liff.state に包まれたまま届いた場合も読み取る
+    if (!params.get("utm_source") && params.get("liff.state")) {
+      const state = params.get("liff.state");
+      params = new URLSearchParams(state.includes("?") ? state.split("?")[1] : state);
+    }
     utm = {
       source: params.get("utm_source") || "direct",
       medium: params.get("utm_medium") || "none",
