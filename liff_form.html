@@ -118,6 +118,9 @@
     <label>走行距離</label>
     <input type="text" name="mileage" placeholder="例: 45000km" required>
 
+    <label>お乗りの車のカラー(任意)</label>
+    <input type="text" name="carColor" placeholder="例: パールホワイト">
+
     <label>次に乗る車種(任意)</label>
     <input type="text" name="nextCarModel">
 
@@ -131,7 +134,7 @@
     <label>グレード(任意)</label>
     <input type="text" name="grade">
 
-    <label>色(任意)</label>
+    <label>次に乗る車の色(任意)</label>
     <input type="text" name="color">
 
     <label>取引日(任意)</label>
@@ -157,9 +160,20 @@
   const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwe2QJpRUOp5butufzMC-AMTjo6A0Kp6ko9ek4x5sMI9TzE4PVUtDGqf7IXavNPb164QA/exec";
 
   let lineUserId = "";
+  // 流入元（URLの utm_ パラメータ）。付いていなければ direct / none
+  let utm = { source: "direct", medium: "none", campaign: "none" };
 
   async function init() {
     await liff.init({ liffId: LIFF_ID });
+
+    // liff.init の後でないとパラメータが読めないため、ここで取得
+    const params = new URLSearchParams(location.search);
+    utm = {
+      source: params.get("utm_source") || "direct",
+      medium: params.get("utm_medium") || "none",
+      campaign: params.get("utm_campaign") || "none"
+    };
+
     if (!liff.isLoggedIn()) {
       liff.login();
       return;
@@ -179,6 +193,9 @@
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
     data.lineUserId = lineUserId;
+    data.utmSource = utm.source;
+    data.utmMedium = utm.medium;
+    data.utmCampaign = utm.campaign;
 
     try {
       await fetch(GAS_ENDPOINT, {
